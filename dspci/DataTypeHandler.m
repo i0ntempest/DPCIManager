@@ -15,6 +15,8 @@
 
 #import "Tables.h"
 
+#import <mach-o/ldsyms.h>
+
 #define kPCIFormat @"%04lX:%04lX"
 
 @implementation DataTypeHandler
@@ -95,7 +97,8 @@
  */
 - (NSString *) loadPCIIDs {
     unsigned long len;
-    char *handle = strdup(getsectdata("__TEXT", "__pci_ids", &len));
+    const struct mach_header_64 *mh = &_mh_execute_header;
+    char *handle = strdup((char *) getsectiondata(mh, "__TEXT", "__pci_ids", &len));
     NSNumber *currentClass;
     NSNumber *currentVendor;
     char buffer[LINE_MAX];
